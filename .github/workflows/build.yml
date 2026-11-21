@@ -8,8 +8,14 @@ on:
     inputs:
       version:
         description: OpenWrt release
-        default: 25.12.5
+        type: string
+        default: 25.12.6
         required: true
+      extra_packages:
+        description: Additional packages (space-separated); the default image already includes LuCI over HTTPS
+        type: string
+        default: ""
+        required: false
   push:
     tags:
       - "v*"
@@ -40,7 +46,14 @@ jobs:
             libssl-dev python3 rsync unzip wget xsltproc zlib1g-dev zstd
 
       - name: Build
-        run: ./build.sh -v "${{ steps.ver.outputs.version }}"
+        env:
+          EXTRA_PACKAGES: ${{ inputs.extra_packages }}
+        run: |
+          if [ -n "$EXTRA_PACKAGES" ]; then
+            ./build.sh -v "${{ steps.ver.outputs.version }}" -p "$EXTRA_PACKAGES"
+          else
+            ./build.sh -v "${{ steps.ver.outputs.version }}"
+          fi
 
       - name: Checksums
         working-directory: out/${{ steps.ver.outputs.version }}
