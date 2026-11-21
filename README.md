@@ -112,15 +112,20 @@ On Linux x86_64 or WSL, with the
 [ImageBuilder prerequisites](https://openwrt.org/docs/guide-user/additional-software/imagebuilder#prerequisites):
 
 ```sh
-./build.sh                      # OpenWrt 25.12.5
+./build.sh                      # OpenWrt 25.12.6 + LuCI over HTTPS
 ./build.sh -v <version>         # another OpenWrt release
 ./build.sh --no-setup-code      # without the setup-code script
-./build.sh -p "luci-ssl"        # extra packages
+./build.sh -p "wireguard-tools luci-proto-wireguard" # append extra packages
 ```
 
+The default image includes the USB installer, `sfdisk`, LuCI with HTTPS
+(`luci-ssl`), the uhttpd web server modules, and the LuCI firewall application.
+Additional packages passed with `-p` are appended to this default package set.
+
 Images end up in `out/<version>/`. The GitHub workflow in `.github/workflows`
-builds the same images (Actions -> Build images -> Run workflow) and publishes
-a release when a tag like `v25.12.5-1` is pushed.
+uses OpenWrt 25.12.6 by default and builds the same LuCI-enabled image
+(Actions -> Build images -> Run workflow). It accepts optional extra packages
+and publishes a release when a tag like `v25.12.6-1` is pushed.
 
 To add the installer to your own ImageBuilder setup, copy `files/` into your
 `FILES` directory and add `sfdisk` to `PACKAGES`.
