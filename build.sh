@@ -6,25 +6,25 @@
 #
 #   ./build.sh [-v VERSION] [--no-setup-code] [-p "extra packages"]
 #
-#   -v VERSION        OpenWrt release (default: 25.12.5)
+#   -v VERSION        OpenWrt release (default: 25.12.6)
 #   --no-setup-code   leave out 99-google-wifi-setup-code (stock behaviour:
 #                     no root password, Wi-Fi disabled)
-#   -p PACKAGES       additional packages, e.g. "luci-ssl"
+#   -p PACKAGES       additional packages to append to the default package set
 #
 # Result: out/<VERSION>/*-google_wifi-squashfs-factory.bin (write it to a USB
 # stick) and *-sysupgrade.bin (for routers already running OpenWrt).
 
 set -eu
 
-VERSION="25.12.5"
+VERSION="25.12.6"
 SETUP_CODE=1
-EXTRA=""
+EXTRA="luci-ssl uhttpd uhttpd-mod-ubus uhttpd-mod-ucode luci-app-firewall"
 
 while [ $# -gt 0 ]; do
 	case "$1" in
 	-v) VERSION="$2"; shift 2 ;;
 	--no-setup-code) SETUP_CODE=0; shift ;;
-	-p) EXTRA="$2"; shift 2 ;;
+	-p) EXTRA="$EXTRA $2"; shift 2 ;;
 	-h|--help) sed -n '3,16p' "$0"; exit 0 ;;
 	*) echo "unknown option: $1" >&2; exit 2 ;;
 	esac
